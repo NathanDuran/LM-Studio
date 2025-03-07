@@ -1,0 +1,75 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/docker-existing-dockerfile
+{
+	"name": "${localWorkspaceFolderBasename}", // Project name
+
+	"build": {
+		// Sets the run context to one level up instead of the .devcontainer folder.
+		"context": "..",
+		// Update the 'dockerFile' property if you aren't using the standard 'Dockerfile' filename.
+		"dockerfile": "./Dockerfile",
+		// Set Docker `ARG` values.
+		"args": {
+			"USERNAME": "nate", // User name
+			"PROJECT_DIR": "${localWorkspaceFolderBasename}" // Project directory
+		}
+	},
+
+	// Features to add to the dev container. More info: https://containers.dev/features
+	// "features": {}
+
+	// Set container run arguments
+	"runArgs": [
+		"--gpus=all", // Enable GPU support
+		"--name=${localWorkspaceFolderBasename}-Container", // Container name
+		"--hostname=devbox", // Container hostname
+		"--net=host" // Enable host networking
+	],
+
+	// Set *default* container specific settings.json values on container create.
+	"customizations": {
+		"vscode": {
+			"settings":  {
+				"terminal.integrated.inheritEnv": true, // Inherit environment variables
+				// Set bash as default terminal on Linux
+				"terminal.integrated.defaultProfile.linux": "bash",
+				"terminal.integrated.profiles.linux": {
+					"bash": {
+						"path": "/bin/bash"
+					}
+				}
+			},
+			"extensions": [
+				
+			]
+		}
+	},
+
+	// Container environment variables
+	"containerEnv": {
+		// Add Github credentials to the container
+		"GITHUB_TOKEN": "${localEnv:GITHUB_TOKEN}",
+		"GITHUB_USER": "${localEnv:GITHUB_USER}",
+		// Set DISPLAY environment variable for GUI applications
+		"DISPLAY": "host.docker.internal:0" // For Windows
+		//"DISPLAY": "docker.for.mac.host.internal:0" // For MACs
+	},
+
+	// Use 'forwardPorts' to make a list of ports inside the container available locally.
+	// "forwardPorts": [],
+
+	// Workspace mount settings
+	"workspaceMount": "source=${localWorkspaceFolder},target=/home/nate/${localWorkspaceFolderBasename},type=bind",
+	"workspaceFolder": "/home/nate/${localWorkspaceFolderBasename}",
+
+	// Run commands after the container is created.
+	"postCreateCommand": "pip install -r requirements.txt --break-system-packages",
+
+	// Configure tool-specific properties.
+	// "customizations": {},
+
+	// Uncomment to connect as an existing user other than the container default. More info: https://aka.ms/dev-containers-non-root.
+	// "remoteUser": "vscode",
+
+	"shutdownAction": "stopContainer" // Prevent container from shutting down after VS Code is closed (or "stopContainer" to stop it)
+}
